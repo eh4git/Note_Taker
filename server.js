@@ -1,77 +1,69 @@
 // Dependencies
-var http = require("http");
-var fs = require("fs");
-// Set our port to 8080
-var PORT = 8080;
-// Create our server
-var server = http.createServer(handleRequest);
-// Start our server
-server.listen(PORT, function() {
-    // Callback triggered when server is successfully listening. Hurray!
-    console.log("Server listening on: http://localhost:" + PORT);
+const express = require("express")
+const fs = require("fs");
+const app = express();
+const path = require("path");
+// Set our port to production ready port or 8080
+const PORT = process.env.PORT || 8080;
+app.use(express.static('public'))
+// Sets up the Express app to handle data parsing
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+//API Routes
+//Get saved notes from db.json
+app.get("/api/notes", function(req, res){
+  return res.json(req.body);
+})
+app.get("/api/notes", function(req, res) {
+  fs.readFile('/etc/passwd', (err, data) => {
+    if (err){
+      throw err;
+    console.log(data);
+  } else {
+    console.log(data)
+  }
   });
-  // Create a function which handles incoming requests and sends responses
-  function handleRequest(req, res) {
-    // Capture the url the request is made to
-    var path = req.url;
-    // Depending on the URL, display a different HTML file.
-    switch (path) {
-    case "/notes":
-      return displayNotes(res);
-    case "/home":
-      return displayIndex(res);
-    default:
-      return display404(path, res);
-    }
-  }
-
-  //Function to return notes.html
-  function displayNotes(res) {
-    var myHTML = `<html>
-      <body><h1>Home Page</h1>
-     <p>This is my awsome notes page!</p> <br>
-      <ul>
-      <li><a href='/Home'>Home</a></li><br>
-    <li><a href='/Favorite_Food'>Food</a></li><br>
-    <li><a href='/Favorite_Movies'>Movies</a></li><br>
-    <li><a href='/Favorite_CSS_Frameworks'>CSS</a></li><br>
-      </ul>
-      </body></html>`;
-    // Configure the response to return a status code of 200 (meaning everything went OK), and to be an HTML document
-    res.writeHead(200, { "Content-Type": "text/html" });
-    // End the response by sending the client the myHTML string (which gets rendered as an HTML document thanks to the code above)
-    res.end(myHTML);
-  }
-// Html Routes
-//Function to return index.html
-function displayIndex(res) {
-  var myHTML = `<html>
-    <body><h1>Home Page</h1>
-   <p>This is my awsome index page!</p> <br>
-    <ul>
-    <li><a href='/Home'>Home</a></li><br>
-  <li><a href='/Favorite_Food'>Food</a></li><br>
-  <li><a href='/Favorite_Movies'>Movies</a></li><br>
-  <li><a href='/Favorite_CSS_Frameworks'>CSS</a></li><br>
-    </ul>
-    </body></html>`;
-  // Configure the response to return a status code of 200 (meaning everything went OK), and to be an HTML document
-  res.writeHead(200, { "Content-Type": "text/html" });
-  // End the response by sending the client the myHTML string (which gets rendered as an HTML document thanks to the code above)
-  res.end(myHTML);
-}
-function display404(url, res) {
-    var myHTML = "<html>" +
-      "<body><h1>5150 YOU DID IT WORNG </h1>" +
-      "<p>WHAT IN THE WORLD ARE YOU DOING!!  " + url + " DOES NOT EXIST, GET IT TOGETHER MAN!</p>" +
-      "</body></html>";
-    // Configure the response to return a status code of 404 (meaning the page/resource asked for couldn't be found), and to be an HTML document
-    res.writeHead(404, { "Content-Type": "text/html" });
-    // End the response by sending the client the myHTML string (which gets rendered as an HTML document thanks to the code above)
-    res.end(myHTML);
-  }
-
-  //API Routes
-  app.get("/api/notes", function(req, res) {
-    res.send("Welcome to the Star Wars Page!");
   });
+
+// Post notes from json 
+app.post("/api/notes", function(req, res) {
+  let newNote = req.body
+  fs.appendFile('db.json', newNote, (err) => {
+    if (err) throw err;
+    console.log('The "newNote" was appended to file!');
+  });
+});
+
+// Delete notes from json
+// app.delete("/api/notes", function(req, res) {
+//   
+// });
+
+// HTML Routes
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.js"));
+});
+
+app.get("/notes", (req, res) => {
+  res.sendFile(path.join(__dirname, "notes.html"));
+});
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.js"));
+});
+
+// The catch all route I.E. * has to be at the bottom of your routes. Otherwise, it'll break everything.
+
+
+
+
+
+
+
+
+
+
+
+app.listen(PORT, () => {
+  console.log("Server listening on: http://localhost:" + PORT);
+})
