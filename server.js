@@ -17,27 +17,21 @@ app.use(express.json());
 app.get("/api/notes", function (req, res) {
   fs.readFile('./db/db.json', 'utf-8', (err, data) => {
     if (err) throw err
-    jsonData = JSON.parse(data)
-    return res.json(jsonData);
+    return res.json(JSON.parse(data));
   })
-  
 })
-// app.get("/api/notes", function (req, res) {
-//   fs.readFile('db.json', (err, data) => {
-//     if (err) throw err;
-//     console.log(data);
-//     return res.json("db.json");
-//   });
-// });
 
 // Write note on db.json 
 app.post("/api/notes", function (req, res) {
-  let newNote = req.body
-  fs.writeFile("db.json", newNote, (err) => {
+  let newNote = JSON.stringify(req.body)
+  fs.appendeFile("./db/db.json", newNote , (err) => {
     if (err) return console.log(err);
-
+    fs.readFile('./db/db.json', 'utf-8', (err, data) => {
+      if (err) throw err
+      return res.json(JSON.parse(data));
+    })
   })
-});
+  });
 
 // Delete note from db.json
 // app.delete("/api/notes", function(req, res) {
