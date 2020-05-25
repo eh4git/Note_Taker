@@ -29,23 +29,28 @@ app.post("/api/notes", function (req, res) {
     const dataParse = JSON.parse(data);
     dataParse.push(addNote);
     noteID = dataParse.map((note, index) => {
-      note.id = index + 1
+      note.id = index + 1;
     });
     let newNote = JSON.stringify(dataParse);
     fs.writeFile('./db/db.json', newNote, (err) => {
       if (err) throw err;
     });
-    res.json(dataParse)
+    res.json(dataParse);
   })
 });
 // Delete note from db.json
 app.delete("/api/notes/:id", function (req, res) {
   //   //parse int   req.params.id
-
+const noteToDelId = parseInt(req.params.id);
   //  parse fs.readfile sync 
-  //   .filter to select all notes not to delete
-  // stringify the notes
+const dbObj = JSON.parse(fs.readFileSync('./db/db.json'));
+  //  filter to select all notes not to delete, stringify the notes
+const notesNotToDel = JSON.stringify(dbObj.filter(req => req.id !== noteToDelId));
   // writeFile to db json all notes except one to remove
+  fs.writeFile('./db/db.json', notesNotToDel, (err, data) => {
+    if(err) throw err;
+  })
+  res.json(notesNotToDel)
   });
 
   // HTML Routes
