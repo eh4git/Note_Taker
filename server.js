@@ -16,44 +16,50 @@ app.use(express.json());
 //Get saved notes from db.json
 app.get("/api/notes", function (req, res) {
   fs.readFile('./db/db.json', 'utf-8', (err, data) => {
-    if (err) throw err
-    return res.json(JSON.parse(data));
+    if (err) throw err;
+    res.json(JSON.parse(data));
   })
-})
+});
 
 // Write note on db.json 
 app.post("/api/notes", function (req, res) {
-  let newNote = JSON.stringify(req.body)
-  fs.appendeFile("./db/db.json", newNote , (err) => {
-    if (err) return console.log(err);
-    fs.readFile('./db/db.json', 'utf-8', (err, data) => {
-      if (err) throw err
-      return res.json(JSON.parse(data));
-    })
+  const addNote = req.body;
+  fs.readFile('./db/db.json', 'utf-8', (err, data) => {
+    if (err) throw err;
+    const dataParse = JSON.parse(data);
+    dataParse.push(addNote);
+    noteID = dataParse.map((note, index) => {
+      note.id = index + 1
+    });
+    let newNote = JSON.stringify(dataParse);
+    fs.writeFile('./db/db.json', newNote, (err) => {
+      if (err) throw err;
+    });
+    res.json(dataParse)
   })
+});
+// Delete note from db.json
+app.delete("/api/notes/:id", function (req, res) {
+  //   //parse int   req.params.id
+
+  //  parse fs.readfile sync 
+  //   .filter to select all notes not to delete
+  // stringify the notes
+  // writeFile to db json all notes except one to remove
   });
 
-// Delete note from db.json
-// app.delete("/api/notes", function(req, res) {
-//   
-// });
+  // HTML Routes
+  app.get("/notes", (req, res) => {
+    res.sendFile(path.join(__dirname, "/public/notes.html"));
+  });
+  // Catch all Html route
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "/public/index.html"));
+  });
 
-// HTML Routes
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "/public/index.js"));
-});
-
-app.get("/notes", (req, res) => {
-  res.sendFile(path.join(__dirname, "/public/notes.html"));
-});
-// Catch all Html route
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "/public/index.js"));
-});
-
-// The catch all route I.E. * has to be at the bottom of your routes. Otherwise, it'll break everything.
+  // The catch all route I.E. * has to be at the bottom of your routes. Otherwise, it'll break everything.
 
 
-app.listen(PORT, () => {
-  console.log("Server listening on: http://localhost:" + PORT);
-})
+  app.listen(PORT, () => {
+    console.log("Server listening on: http://localhost:" + PORT);
+  });
