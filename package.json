@@ -1,14 +1,24 @@
 {
   "name": "note-taker",
   "version": "1.0.0",
-  "description": "",
+  "description": "record, save, and delete notes",
   "main": "server.js",
   "scripts": {
+    "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Erik Hirsch",
   "license": "ISC",
   "dependencies": {
     "express": "^4.16.4"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eh4git/Note_Taker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/eh4git/Note_Taker/issues"
+  },
+  "homepage": "https://github.com/eh4git/Note_Taker#readme"
 }

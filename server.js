@@ -42,7 +42,7 @@ app.post("/api/notes", function (req, res) {
 app.delete("/api/notes/:id", function (req, res) {
   //   //parse int   req.params.id
 const noteToDelId = parseInt(req.params.id);
-  //  parse fs.readfile sync 
+  //  parse the data from fs.readfilesync of .json and save as variable
 const dbObj = JSON.parse(fs.readFileSync('./db/db.json'));
   //  filter to select all notes not to delete, stringify the notes
 const notesNotToDel = JSON.stringify(dbObj.filter(req => req.id !== noteToDelId));
