@@ -20,6 +20,7 @@ app.get("/api/notes", function (req, res) {
     res.json(JSON.parse(data));
   })
 });
+//console.log('weirdthing',noteID);
 
 // Write note on db.json 
 app.post("/api/notes", function (req, res) {
@@ -28,9 +29,7 @@ app.post("/api/notes", function (req, res) {
     if (err) throw err;
     const dataParse = JSON.parse(data);
     dataParse.push(addNote);
-    noteID = dataParse.map((note, index) => {
-      note.id = index + 1;
-    });
+    dataParse.forEach((note, index) =>  note.id = index + 1);
     let newNote = JSON.stringify(dataParse);
     fs.writeFile('./db/db.json', newNote, (err) => {
       if (err) throw err;
@@ -38,6 +37,7 @@ app.post("/api/notes", function (req, res) {
     res.json(dataParse);
   })
 });
+
 // Delete note from db.json
 app.delete("/api/notes/:id", function (req, res) {
   //   //parse int   req.params.id
@@ -63,8 +63,6 @@ const notesNotToDel = JSON.stringify(dbObj.filter(req => req.id !== noteToDelId)
   });
 
   // The catch all route I.E. * has to be at the bottom of your routes. Otherwise, it'll break everything.
-
-
   app.listen(PORT, () => {
     console.log("Server listening on: http://localhost:" + PORT);
   });
