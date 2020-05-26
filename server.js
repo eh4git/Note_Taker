@@ -11,7 +11,6 @@ app.use(express.static('public'))
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-
 //API Routes
 //Get saved notes from db.json
 app.get("/api/notes", function (req, res) {
@@ -20,8 +19,6 @@ app.get("/api/notes", function (req, res) {
     res.json(JSON.parse(data));
   })
 });
-//console.log('weirdthing',noteID);
-
 // Write note on db.json 
 app.post("/api/notes", function (req, res) {
   const addNote = req.body;
@@ -37,7 +34,6 @@ app.post("/api/notes", function (req, res) {
     res.json(dataParse);
   })
 });
-
 // Delete note from db.json
 app.delete("/api/notes/:id", function (req, res) {
   //   //parse int   req.params.id
@@ -61,7 +57,6 @@ const notesNotToDel = JSON.stringify(dbObj.filter(req => req.id !== noteToDelId)
   app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "/public/index.html"));
   });
-
   // The catch all route I.E. * has to be at the bottom of your routes. Otherwise, it'll break everything.
   app.listen(PORT, () => {
     console.log("Server listening on: http://localhost:" + PORT);
